@@ -1,0 +1,168 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teko Sports Foundation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        header img {
+            max-width: 200px;
+            height: auto;
+        }
+        nav {
+            background-color: #28a745;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        footer {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="TSF Logo">
+        <h1>Teko Sports Foundation (TSF)</h1>
+        <p>Empowering Communities Through Sports</p>
+    </header>
+
+    <nav>
+        <a href="#about">About</a>
+        <a href="#objectives">Objectives</a>
+        <a href="#governance">Governance</a>
+        <a href="#workplan">Work Plan</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <section id="about">
+        <h2>About TSF</h2>
+        <p>Teko Sports Foundation (TSF) is an Indigenous Non-Governmental Organization (NGO) incorporated with the Uganda Registration Services Bureau (URSB) on April 8, 2025 (Registration No: 80034915013327). Based in Gulu City, Northern Uganda, TSF operates in Omoro, Oyam, and Nwoya districts.</p>
+        <p><strong>Vision:</strong> To empower communities and tackle critical challenges through innovative sports-based programs, fostering positive change in health, education, and social equity.</p>
+        <p><strong>Mission:</strong> To create a Uganda where sports and games are catalysts for a healthy, equitable, and sustainable society.</p>
+    </section>
+
+    <section id="objectives">
+        <h2>Our Objectives</h2>
+        <ul>
+            <li><strong>Health and Nutrition:</strong> Promote physical activity, healthy eating, and disease prevention through sports.</li>
+            <li><strong>Education Outcomes:</strong> Use sports to improve school attendance, academic performance, and life skills, offering scholarships for talented athletes.</li>
+            <li><strong>Community Empowerment:</strong> Foster peace, justice, and cultural preservation through inclusive sports programs, empowering marginalized groups.</li>
+            <li><strong>Environmental Awareness:</strong> Educate communities about sustainable practices using sports as a platform.</li>
+        </ul>
+    </section>
+
+    <section id="governance">
+        <h2>Governance Structure</h2>
+        <p><strong>Founding Member:</strong> Ogwang James Odur (Supreme Governing Body)</p>
+        <p><strong>Management Executive Committee (MEC):</strong></p>
+        <ul>
+            <li>Chairperson: Ogwang James Odur</li>
+            <li>Treasurer: Dranzoa Mercy</li>
+            <li>Vice Chairperson, Coordinator, Secretary: To be appointed by 2026</li>
+        </ul>
+        <p>A Board of Directors will be established by 2027 to provide strategic oversight as TSF grows.</p>
+    </section>
+
+    <section id="workplan">
+        <h2>5-Year Work Plan (2025–2030)</h2>
+        <p>TSF aims to reach 15,000 children and youth annually by 2030, with indirect benefits to 50,000 people. Key activities include:</p>
+        <ul>
+            <li><strong>Year 1 (2025–2026):</strong> Pilot sports clinics in 10 schools (1,000 children) and host 3 community festivals (2,000 participants).</li>
+            <li><strong>Year 2–3 (2026–2028):</strong> Scale to 30 schools (4,000 children), train 30 coaches, and promote peace through sports (7,000 participants).</li>
+            <li><strong>Year 4–5 (2028–2030):</strong> Establish 3 community sports hubs, award 250 scholarships, and host a Northern Uganda Sports Summit (15,000 participants).</li>
+        </ul>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p><strong>Ogwang James Odur</strong><br>Founder and Chairperson<br>Phone: +256 780 823 183 / +256 701 206 270<br>Email: jamesogwangodur@gmail.com</p>
+        <p><strong>Dranzoa Mercy</strong><br>Treasurer<br>Phone: +256 764 406 113 / +256 705 660 195<br>Email: mercydranzoa@gmail.com</p>
+        <p>We welcome partnerships to transform lives through sports in Northern Uganda.</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Teko Sports Foundation. All rights reserved.</p>
+    </footer>
+</body>
+</html>
